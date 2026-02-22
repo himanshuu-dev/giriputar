@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Cinzel, Manrope, Playfair_Display } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -31,6 +32,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${manrope.variable} ${playfair.variable} ${cinzel.variable} antialiased`}>
         {children}
+        <Toaster position="top-center" />
       </body>
     </html>
   );

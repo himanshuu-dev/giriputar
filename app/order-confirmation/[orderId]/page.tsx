@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { CheckCircle2, Mail, MapPin, Package, Phone } from "lucide-react";
 import { OrderRecord } from "@/app/lib/site-data";
 
 export default function OrderConfirmationPage() {
@@ -47,18 +48,27 @@ export default function OrderConfirmationPage() {
     <div className="min-h-screen bg-[#FDFBF7] px-4 py-12">
       <div className="mx-auto max-w-3xl">
         <div className="mb-8 text-center">
-          <p className="mb-4 text-7xl text-[#15803D]">✓</p>
-          <h1 className="font-display mb-2 text-4xl font-bold text-[#2F3E2E] md:text-5xl">Order Confirmed!</h1>
-          <p className="text-lg text-[#7A7A7A]">
+          <CheckCircle2 className="mx-auto mb-4 h-20 w-20 text-[#15803D]" data-testid="success-icon" />
+          <h1 className="mb-2 text-4xl font-bold text-[#2F3E2E] md:text-5xl" data-testid="success-heading">
+            Order Confirmed!
+          </h1>
+          <p className="text-lg text-[#7A7A7A]" data-testid="order-id-text">
             Order ID: <span className="font-semibold text-[#2F3E2E]">{order.id}</span>
           </p>
         </div>
 
         <section className="mb-6 rounded-xl border border-[#D4C5A9] bg-white p-8 shadow-lg">
-          <h2 className="mb-6 text-2xl font-bold text-[#2F3E2E]">Order Details</h2>
+          <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-[#2F3E2E]">
+            <Package className="h-6 w-6" />
+            Order Details
+          </h2>
           <div className="mb-6 space-y-4">
             {order.items.map((item, index) => (
-              <div key={`${item.product_id}-${index}`} className="flex items-center justify-between border-b border-[#E8E2D2] pb-4">
+              <div
+                key={`${item.product_id}-${index}`}
+                className="flex items-center justify-between border-b border-[#E8E2D2] pb-4"
+                data-testid={`order-item-${index}`}
+              >
                 <div>
                   <p className="font-semibold text-[#2F3E2E]">{item.product_name}</p>
                   <p className="text-sm text-[#7A7A7A]">Quantity: {item.quantity}</p>
@@ -69,23 +79,34 @@ export default function OrderConfirmationPage() {
           </div>
           <div className="flex items-center justify-between border-t-2 border-[#2F3E2E] pt-4">
             <p className="text-xl font-bold text-[#2F3E2E]">Total Amount</p>
-            <p className="text-2xl font-bold text-[#E6AF2E]">₹{order.total_amount.toFixed(2)}</p>
+            <p className="text-2xl font-bold text-[#E6AF2E]" data-testid="total-amount">
+              ₹{order.total_amount.toFixed(2)}
+            </p>
           </div>
         </section>
 
         <section className="mb-6 rounded-xl border border-[#D4C5A9] bg-white p-8 shadow-lg">
-          <h2 className="mb-6 text-2xl font-bold text-[#2F3E2E]">Shipping Details</h2>
+          <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-[#2F3E2E]">
+            <MapPin className="h-6 w-6" />
+            Shipping Details
+          </h2>
           <div className="space-y-3">
             <div>
               <p className="text-sm text-[#7A7A7A]">Name</p>
-              <p className="font-semibold text-[#2F3E2E]">{order.customer_name}</p>
+              <p className="font-semibold text-[#2F3E2E]" data-testid="customer-name">
+                {order.customer_name}
+              </p>
             </div>
             <div>
-              <p className="text-sm text-[#7A7A7A]">Email</p>
+              <p className="flex items-center gap-1 text-sm text-[#7A7A7A]">
+                <Mail className="h-4 w-4" /> Email
+              </p>
               <p className="font-semibold text-[#2F3E2E]">{order.customer_email}</p>
             </div>
             <div>
-              <p className="text-sm text-[#7A7A7A]">Phone</p>
+              <p className="flex items-center gap-1 text-sm text-[#7A7A7A]">
+                <Phone className="h-4 w-4" /> Phone
+              </p>
               <p className="font-semibold text-[#2F3E2E]">{order.customer_phone}</p>
             </div>
             <div>
@@ -98,7 +119,11 @@ export default function OrderConfirmationPage() {
         </section>
 
         <div className="text-center">
-          <Link href="/" className="inline-flex rounded-full bg-[#2F3E2E] px-8 py-4 text-lg text-[#FDFBF7] transition-colors hover:bg-[#1F2B1E]">
+          <Link
+            href="/"
+            className="inline-flex rounded-full bg-[#2F3E2E] px-8 py-4 text-lg text-[#FDFBF7] transition-colors hover:bg-[#1F2B1E]"
+            data-testid="continue-shopping-btn"
+          >
             Continue Shopping
           </Link>
         </div>

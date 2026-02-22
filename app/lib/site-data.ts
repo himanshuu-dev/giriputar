@@ -39,7 +39,7 @@ export const PRODUCT: Product = {
   price: 299,
   weight: "200g",
   image_url:
-    "https://customer-assets.emergentagent.com/job_dd09a6af-4865-4761-8b06-e6353edaca87/artifacts/9wect2by_IMG_8717.png",
+    "assets/product.png",
   benefits: [
     "Rich in natural curcumin",
     "Boosts immunity naturally",
@@ -61,21 +61,21 @@ export const LOGO_URL =
 
 export const BENEFIT_CARDS = [
   {
-    title: "Boosts Immunity",
+    title: "Strong by nature",
     description:
-      "Natural curcumin strengthens your immune system and fights inflammation.",
+      "High altitude farming means slower growth - which means more concentrated curcumin and richer flavour in evry spoon.",
     icon: "heart",
   },
   {
-    title: "100% Pure",
+    title: "Absolutely Pure, Nothing Hidden",
     description:
-      "No additives, no preservatives, no chemicals. Just pure mountain goodness.",
+      "No polish, No artificial colour, No chemicals. Only sun-dried, traditionally processed Pahadi turmeric.",
     icon: "shield",
   },
   {
-    title: "Traditional Wellness",
+    title: "From Real Farmers, Not Factories",
     description:
-      "Harvested using age-old methods from pristine Himalayan farms.",
+      "Source directly from Himalayan farms where turmeric is grown traditional way - not mass-produced for supermarkets.",
     icon: "leaf",
   },
 ] as const;
