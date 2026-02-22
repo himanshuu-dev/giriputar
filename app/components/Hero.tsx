@@ -32,7 +32,7 @@ export default function Hero() {
           transition={{ duration: 0.8 }}
         >
           <h1
-            className="mb-6 text-5xl font-bold leading-tight tracking-tight text-white sm:text-6xl lg:text-7xl"
+            className="mb-6 text-5xl font-bold leading-tight tracking-tight text-[#e0e0e0] sm:text-6xl lg:text-7xl"
             style={{ fontFamily: "Playfair Display, serif" }}
             data-testid="hero-heading"
           >

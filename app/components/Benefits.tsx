@@ -86,7 +86,7 @@ export default function Benefits() {
         <div className="relative z-10 flex h-full w-full items-center justify-center px-4 text-center">
           <div>
             <h2
-              className="mb-1 text-2xl font-bold text-white md:text-4xl"
+              className="mb-1 text-2xl font-bold text-[#e0e0e0] md:text-4xl"
               style={{ fontFamily: "Playfair Display, serif" }}
               data-testid="benefits-heading"
             >
