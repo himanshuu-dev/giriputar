@@ -26,7 +26,7 @@ export default function BrandStory() {
           viewport={{ once: true }}
         >
           <h2
-            className="mb-8 text-4xl font-bold text-[#e0e0e0] md:text-5xl"
+            className="mb-8 text-4xl font-bold text-[#d12323] md:text-5xl"
             style={{ fontFamily: "Playfair Display, serif" }}
             data-testid="story-heading"
           >
