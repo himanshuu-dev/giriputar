@@ -2,9 +2,11 @@
 
 import { motion } from "framer-motion";
 import { Star } from "lucide-react";
-import { TESTIMONIALS } from "../lib/site-data";
+import { TESTIMONIALS, type Testimonial } from "../lib/site-data";
 
-export default function Testimonials() {
+export default function Testimonials({ testimonials }: { testimonials?: Testimonial[] }) {
+  const reviews = testimonials?.length ? testimonials : TESTIMONIALS;
+
   return (
     <section
       id="testimonials"
@@ -32,9 +34,9 @@ export default function Testimonials() {
         </motion.div>
 
         <div className="grid gap-8 md:grid-cols-3">
-          {TESTIMONIALS.map((testimonial, index) => (
+          {reviews.map((testimonial, index) => (
             <motion.article
-              key={testimonial.name}
+              key={testimonial.id ?? `${testimonial.name}-${index}`}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.2 }}

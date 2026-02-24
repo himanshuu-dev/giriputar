@@ -1,10 +1,17 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import type { CartItem, OrderRecord } from "./lib/site-data";
-import { PRODUCT } from "./lib/site-data";
+import type {
+  CartItem,
+  OrderRecord,
+  Product,
+  SiteSettings,
+  Testimonial,
+} from "./lib/site-data";
+import { TESTIMONIALS } from "./lib/site-data";
+import { supabase } from "./lib/supabase";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import ProductShowcase from "./components/ProductShowcase";
@@ -18,6 +25,70 @@ export default function Home() {
   const router = useRouter();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [isProductLoading, setIsProductLoading] = useState(true);
+  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
+  const [featuredTestimonials, setFeaturedTestimonials] = useState<Testimonial[]>(TESTIMONIALS);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const [productResponse, settingsResponse, testimonialsResponse] = await Promise.all([
+        supabase
+          .from("products")
+          .select("*")
+          .eq("in_stock", true)
+          .limit(1)
+          .maybeSingle(),
+        supabase.from("site_settings").select("*").eq("id", 1).single(),
+        supabase
+          .from("testimonials")
+          .select("*")
+          .eq("featured", true)
+          .order("id", { ascending: true }),
+      ]);
+
+      if (productResponse.error) {
+        toast.error("Failed to load product.");
+      } else if (!productResponse.data) {
+        toast.error("No product found in database.");
+      } else {
+        const productRecord = productResponse.data as Product & {
+          price: number | string;
+          benefits: unknown;
+        };
+        setProduct({
+          ...productRecord,
+          price: Number(productRecord.price),
+          benefits: Array.isArray(productRecord.benefits)
+            ? (productRecord.benefits as string[])
+            : [],
+        });
+      }
+
+      if (!settingsResponse.error && settingsResponse.data) {
+        setSiteSettings(settingsResponse.data as SiteSettings);
+      }
+
+      if (!testimonialsResponse.error && testimonialsResponse.data?.length) {
+        const testimonials = testimonialsResponse.data.map(
+          (row) =>
+            ({
+              id: row.id,
+              name: row.name,
+              location: row.location,
+              rating: Number(row.rating),
+              text: row.text,
+              featured: row.featured,
+            }) as Testimonial,
+        );
+        setFeaturedTestimonials(testimonials);
+      }
+
+      setIsProductLoading(false);
+    };
+
+    void fetchData();
+  }, []);
 
   const cartItemCount = useMemo(
     () => cart.reduce((sum, item) => sum + item.quantity, 0),
@@ -25,16 +96,18 @@ export default function Home() {
   );
 
   const addToCart = (quantity: number) => {
+    if (!product) return;
+
     setCart((previous) => {
-      const existing = previous.find((item) => item.id === PRODUCT.id);
+      const existing = previous.find((item) => item.id === product.id);
       if (existing) {
         return previous.map((item) =>
-          item.id === PRODUCT.id
+          item.id === product.id
             ? { ...item, quantity: item.quantity + quantity }
             : item,
         );
       }
-      return [...previous, { ...PRODUCT, quantity }];
+      return [...previous, { ...product, quantity }];
     });
     setIsCartOpen(true);
     toast.success(`${quantity} item(s) added to cart!`);
@@ -56,13 +129,14 @@ export default function Home() {
     setCart((previous) => previous.filter((item) => item.id !== productId));
   };
 
-  const submitOrder = (formData: CheckoutForm) => {
+  const submitOrder = async (formData: CheckoutForm) => {
     if (!cart.length) return;
     const id = `${Date.now()}`;
     const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const order: OrderRecord = {
       id,
       ...formData,
+      status: "new",
       items: cart.map((item) => ({
         product_id: item.id,
         product_name: item.name,
@@ -72,7 +146,13 @@ export default function Home() {
       total_amount: totalAmount,
     };
 
-    localStorage.setItem(`order:${id}`, JSON.stringify(order));
+    const { error } = await supabase.from("orders").insert(order);
+
+    if (error) {
+      toast.error("Failed to place order. Please try again.");
+      return;
+    }
+
     setIsCartOpen(false);
     setCart([]);
     toast.success("Order placed successfully!");
@@ -83,11 +163,21 @@ export default function Home() {
     <div className="min-h-screen bg-[#FDFBF7] text-[#1A1A1A]">
       <Navbar cartItemCount={cartItemCount} onCartClick={() => setIsCartOpen(true)} />
       <Hero />
-      <ProductShowcase product={PRODUCT} onAddToCart={addToCart} />
+      {isProductLoading ? (
+        <section className="bg-[#F5F1E8] px-4 py-24 text-center text-[#2F3E2E]">
+          Loading product...
+        </section>
+      ) : product ? (
+        <ProductShowcase product={product} onAddToCart={addToCart} />
+      ) : (
+        <section className="bg-[#F5F1E8] px-4 py-24 text-center text-[#2F3E2E]">
+          Product unavailable right now.
+        </section>
+      )}
       <Benefits />
       <BrandStory />
-      <Testimonials />
-      <Footer />
+      <Testimonials testimonials={featuredTestimonials} />
+      <Footer settings={siteSettings} />
       <CartModal
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}

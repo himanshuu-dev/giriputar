@@ -37,7 +37,7 @@ export default function CartModal({
   cart: CartItem[];
   updateQuantity: (productId: string, quantity: number) => void;
   removeItem: (productId: string) => void;
-  onSubmitOrder: (formData: CheckoutForm) => void;
+  onSubmitOrder: (formData: CheckoutForm) => Promise<void>;
 }) {
   const [isCheckout, setIsCheckout] = useState(false);
   const [formData, setFormData] = useState(defaultForm);
@@ -76,13 +76,16 @@ export default function CartModal({
             </div>
           ) : isCheckout ? (
             <form
-              onSubmit={(event) => {
+              onSubmit={async (event) => {
                 event.preventDefault();
                 setIsSubmitting(true);
-                onSubmitOrder(formData);
-                setFormData(defaultForm);
-                setIsCheckout(false);
-                setIsSubmitting(false);
+                try {
+                  await onSubmitOrder(formData);
+                  setFormData(defaultForm);
+                  setIsCheckout(false);
+                } finally {
+                  setIsSubmitting(false);
+                }
               }}
               className="space-y-4"
             >

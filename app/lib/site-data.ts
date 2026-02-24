@@ -22,6 +22,7 @@ export type OrderRecord = {
   city: string;
   state: string;
   pincode: string;
+  status: string;
   items: {
     product_id: string;
     product_name: string;
@@ -29,6 +30,24 @@ export type OrderRecord = {
     price: number;
   }[];
   total_amount: number;
+};
+
+export type SiteSettings = {
+  contact_email: string;
+  contact_phone: string;
+  contact_address: string;
+  instagram_url: string;
+  facebook_url: string;
+  twitter_url: string;
+};
+
+export type Testimonial = {
+  id?: number | string;
+  name: string;
+  location: string;
+  rating: number;
+  text: string;
+  featured?: boolean;
 };
 
 export const PRODUCT: Product = {
@@ -80,23 +99,29 @@ export const BENEFIT_CARDS = [
   },
 ] as const;
 
-export const TESTIMONIALS = [
+export const TESTIMONIALS: Testimonial[] = [
   {
+    id: 1,
     name: "Priya Sharma",
     location: "Mumbai",
     rating: 5,
     text: "The quality is exceptional! You can taste the purity in every pinch. My family loves it in our daily cooking.",
+    featured: true,
   },
   {
+    id: 2,
     name: "Rajesh Kumar",
     location: "Delhi",
     rating: 5,
     text: "Finally found authentic Pahadi Haldi! The aroma and color are far superior to supermarket brands. Highly recommended!",
+    featured: true,
   },
   {
+    id: 3,
     name: "Anita Desai",
     location: "Bangalore",
     rating: 5,
     text: "I have been using GIRIPUTAR for months now. The health benefits are real, and I feel more energetic. Worth every rupee!",
+    featured: true,
   },
-] as const;
+];

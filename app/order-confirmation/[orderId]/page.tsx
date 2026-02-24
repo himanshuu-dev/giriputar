@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CheckCircle2, Mail, MapPin, Package, Phone } from "lucide-react";
 import { OrderRecord } from "@/app/lib/site-data";
+import { supabase } from "@/app/lib/supabase";
 
 export default function OrderConfirmationPage() {
   const params = useParams<{ orderId: string }>();
@@ -13,11 +14,32 @@ export default function OrderConfirmationPage() {
   const [order, setOrder] = useState<OrderRecord | null>(null);
 
   useEffect(() => {
-    const stored = localStorage.getItem(`order:${orderId}`);
-    if (stored) {
-      setOrder(JSON.parse(stored) as OrderRecord);
-    }
-    setLoading(false);
+    const fetchOrder = async () => {
+      const { data, error } = await supabase
+        .from("orders")
+        .select("*")
+        .eq("id", orderId)
+        .single();
+
+      if (!error && data) {
+        const orderRecord = data as OrderRecord & {
+          total_amount: number | string;
+          items: Array<{ price: number | string; quantity: number | string } & OrderRecord["items"][number]>;
+        };
+        setOrder({
+          ...orderRecord,
+          total_amount: Number(orderRecord.total_amount),
+          items: orderRecord.items.map((item) => ({
+            ...item,
+            price: Number(item.price),
+            quantity: Number(item.quantity),
+          })),
+        });
+      }
+      setLoading(false);
+    };
+
+    void fetchOrder();
   }, [orderId]);
 
   if (loading) {

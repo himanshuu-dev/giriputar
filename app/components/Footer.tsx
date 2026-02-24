@@ -1,9 +1,20 @@
 "use client";
 
 import { Facebook, Instagram, Mail, MapPin, Phone, Twitter } from "lucide-react";
-import { LOGO_URL } from "../lib/site-data";
+import { LOGO_URL, type SiteSettings } from "../lib/site-data";
 
-export default function Footer() {
+const defaultSettings: SiteSettings = {
+  contact_email: "info@giriputar.com",
+  contact_phone: "+91 98765 43210",
+  contact_address: "Himalayan Foothills, Uttarakhand, India",
+  instagram_url: "#",
+  facebook_url: "#",
+  twitter_url: "#",
+};
+
+export default function Footer({ settings }: { settings?: SiteSettings | null }) {
+  const resolvedSettings = settings ?? defaultSettings;
+
   return (
     <footer className="bg-[#2F3E2E] px-4 py-16 text-[#FDFBF7]" data-testid="footer">
       <div className="mx-auto max-w-7xl">
@@ -35,15 +46,15 @@ export default function Footer() {
             <div className="space-y-3">
               <div className="flex items-center gap-3" data-testid="contact-email">
                 <Mail className="h-5 w-5 text-[#E6AF2E]" />
-                <span>info@giriputar.com</span>
+                <span>{resolvedSettings.contact_email}</span>
               </div>
               <div className="flex items-center gap-3" data-testid="contact-phone">
                 <Phone className="h-5 w-5 text-[#E6AF2E]" />
-                <span>+91 98765 43210</span>
+                <span>{resolvedSettings.contact_phone}</span>
               </div>
               <div className="flex items-center gap-3" data-testid="contact-address">
                 <MapPin className="h-5 w-5 text-[#E6AF2E]" />
-                <span>Himalayan Foothills, Uttarakhand, India</span>
+                <span>{resolvedSettings.contact_address}</span>
               </div>
             </div>
           </div>
@@ -57,21 +68,27 @@ export default function Footer() {
             </h4>
             <div className="flex gap-4">
               <a
-                href="#"
+                href={resolvedSettings.instagram_url || "#"}
+                target="_blank"
+                rel="noreferrer"
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-[#E6AF2E] transition-transform hover:scale-110"
                 data-testid="social-instagram"
               >
                 <Instagram className="h-5 w-5 text-[#2F3E2E]" />
               </a>
               <a
-                href="#"
+                href={resolvedSettings.facebook_url || "#"}
+                target="_blank"
+                rel="noreferrer"
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-[#E6AF2E] transition-transform hover:scale-110"
                 data-testid="social-facebook"
               >
                 <Facebook className="h-5 w-5 text-[#2F3E2E]" />
               </a>
               <a
-                href="#"
+                href={resolvedSettings.twitter_url || "#"}
+                target="_blank"
+                rel="noreferrer"
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-[#E6AF2E] transition-transform hover:scale-110"
                 data-testid="social-twitter"
               >
